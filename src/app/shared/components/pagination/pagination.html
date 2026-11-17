@@ -1,0 +1,49 @@
+@if (pages() > 1) {
+  <nav aria-label="Navegación de páginas" class="flex justify-center items-center my-8">
+    <div class="join flex-wrap justify-center shadow-xs">
+      <!-- Botón Anterior -->
+      <a
+        class="join-item btn btn-sm"
+        [class.btn-disabled]="currentPage() <= 1"
+        [routerLink]="[]"
+        [queryParams]="{ page: currentPage() - 1 }"
+        queryParamsHandling="merge"
+        aria-label="Página anterior"
+      >
+        «
+      </a>
+
+      <!-- Lista de Páginas Dinámica -->
+      @for (item of pagesList(); track $index) {
+        @if (item === '...') {
+          <button type="button" class="join-item btn btn-sm btn-disabled pointer-events-none">
+            ...
+          </button>
+        } @else {
+          <a
+            class="join-item btn btn-sm"
+            [class.btn-primary]="item === currentPage()"
+            [routerLink]="[]"
+            [queryParams]="{ page: item }"
+            queryParamsHandling="merge"
+            [attr.aria-current]="item === currentPage() ? 'page' : null"
+          >
+            {{ item }}
+          </a>
+        }
+      }
+
+      <!-- Botón Siguiente -->
+      <a
+        class="join-item btn btn-sm"
+        [class.btn-disabled]="currentPage() >= pages()"
+        [routerLink]="[]"
+        [queryParams]="{ page: currentPage() + 1 }"
+        queryParamsHandling="merge"
+        aria-label="Página siguiente"
+      >
+        »
+      </a>
+    </div>
+  </nav>
+}

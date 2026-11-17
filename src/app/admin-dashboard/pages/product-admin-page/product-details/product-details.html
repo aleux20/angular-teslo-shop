@@ -1,0 +1,301 @@
+<!-- Encabezado superior con botón de acción rápido -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+  <div>
+    <h1 class="text-2xl md:text-3xl font-bold tracking-tight">
+      {{ product().title || 'Nuevo Producto' }}
+    </h1>
+    <p class="text-sm text-base-content/60 mt-0.5">
+      Modifica y actualiza la información del producto.
+    </p>
+  </div>
+
+  <button
+    class="btn btn-primary gap-2 shadow-md"
+    type="submit"
+    form="productForm"
+    [disabled]="isSaving()"
+  >
+    @if (isSaving()) {
+      <span class="loading loading-spinner"></span>
+    } @else {
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-5 h-5"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+      </svg>
+    }
+    Guardar cambios
+  </button>
+</div>
+
+<div class="divider my-2"></div>
+
+<!-- Formulario Principal -->
+<form
+  id="productForm"
+  [formGroup]="productForm"
+  class="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-12"
+  (ngSubmit)="onSubmit()"
+>
+  <!-- Columna Izquierda: Información General y Datos de Venta -->
+  <div class="lg:col-span-7 flex flex-col gap-6">
+    <!-- Tarjeta: Datos Generales -->
+    <div class="bg-base-100 p-6 rounded-box shadow-sm border border-base-200 flex flex-col gap-4">
+      <h2 class="text-lg font-bold">Datos generales</h2>
+
+      <!-- Título -->
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text font-medium">Título del producto</span></label>
+        <input
+          type="text"
+          placeholder="Ej. Teslo Hoodie"
+          class="input input-bordered w-full"
+          formControlName="title"
+          [class.input-error]="
+            productForm.get('title')?.invalid && productForm.get('title')?.touched
+          "
+        />
+        <app-form-error-label [control]="productForm.get('title')!" />
+      </div>
+
+      <!-- Slug -->
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text font-medium">Slug (URL amigable)</span></label>
+        <input
+          type="text"
+          placeholder="ej_teslo_hoodie"
+          class="input input-bordered w-full"
+          formControlName="slug"
+          [class.input-error]="productForm.get('slug')?.invalid && productForm.get('slug')?.touched"
+        />
+        <app-form-error-label [control]="productForm.get('slug')!" />
+      </div>
+
+      <!-- Descripción -->
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text font-medium">Descripción</span></label>
+        <textarea
+          class="textarea textarea-bordered h-32"
+          placeholder="Detalles y características del producto..."
+          formControlName="description"
+          [class.textarea-error]="
+            productForm.get('description')?.invalid && productForm.get('description')?.touched
+          "
+        ></textarea>
+        <app-form-error-label [control]="productForm.get('description')!" />
+      </div>
+    </div>
+
+    <!-- Tarjeta: Datos de Venta y Atributos -->
+    <div class="bg-base-100 p-6 rounded-box shadow-sm border border-base-200 flex flex-col gap-4">
+      <h2 class="text-lg font-bold">Datos de venta e Inventario</h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Precio -->
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text font-medium">Precio ($)</span></label>
+          <input
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="0.00"
+            class="input input-bordered w-full"
+            formControlName="price"
+            [class.input-error]="
+              productForm.get('price')?.invalid && productForm.get('price')?.touched
+            "
+          />
+          <app-form-error-label [control]="productForm.get('price')!" />
+        </div>
+
+        <!-- Inventario -->
+        <div class="form-control w-full">
+          <label class="label"
+            ><span class="label-text font-medium">Inventario (Stock)</span></label
+          >
+          <input
+            type="number"
+            min="0"
+            step="1"
+            placeholder="0"
+            class="input input-bordered w-full"
+            formControlName="stock"
+            [class.input-error]="
+              productForm.get('stock')?.invalid && productForm.get('stock')?.touched
+            "
+          />
+          <app-form-error-label [control]="productForm.get('stock')!" />
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="form-control w-full">
+        <label class="label"
+          ><span class="label-text font-medium">Tags (separados por coma)</span></label
+        >
+        <input
+          type="text"
+          placeholder="shirt, hoodie, men"
+          class="input input-bordered w-full"
+          formControlName="tags"
+        />
+      </div>
+
+      <!-- Selección de Género -->
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text font-medium">Categoría / Género</span></label>
+        <div
+          class="grid grid-cols-2 sm:grid-cols-4 gap-2"
+          role="radiogroup"
+          aria-label="Categoría o Género"
+        >
+          <button
+            type="button"
+            class="btn btn-sm"
+            role="radio"
+            [attr.aria-checked]="productForm.value.gender === 'men'"
+            [class.btn-primary]="productForm.value.gender === 'men'"
+            [class.btn-outline]="productForm.value.gender !== 'men'"
+            (click)="productForm.patchValue({ gender: 'men' })"
+          >
+            Masculino
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm"
+            role="radio"
+            [attr.aria-checked]="productForm.value.gender === 'women'"
+            [class.btn-primary]="productForm.value.gender === 'women'"
+            [class.btn-outline]="productForm.value.gender !== 'women'"
+            (click)="productForm.patchValue({ gender: 'women' })"
+          >
+            Femenino
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm"
+            role="radio"
+            [attr.aria-checked]="productForm.value.gender === 'kid'"
+            [class.btn-primary]="productForm.value.gender === 'kid'"
+            [class.btn-outline]="productForm.value.gender !== 'kid'"
+            (click)="productForm.patchValue({ gender: 'kid' })"
+          >
+            Kid
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm"
+            role="radio"
+            [attr.aria-checked]="productForm.value.gender === 'unisex'"
+            [class.btn-primary]="productForm.value.gender === 'unisex'"
+            [class.btn-outline]="productForm.value.gender !== 'unisex'"
+            (click)="productForm.patchValue({ gender: 'unisex' })"
+          >
+            Unisex
+          </button>
+        </div>
+      </div>
+
+      <!-- Tallas (Sizes) -->
+      <div class="form-control w-full">
+        <label class="label"><span class="label-text font-medium">Tallas disponibles</span></label>
+        <div class="flex flex-wrap gap-2">
+          @for (size of sizes; track size) {
+            <button
+              class="btn btn-sm"
+              type="button"
+              (click)="onSizeClicked(size)"
+              [class.btn-secondary]="productForm.value.sizes?.includes(size)"
+              [class.btn-outline]="!productForm.value.sizes?.includes(size)"
+            >
+              {{ size }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Columna Derecha: Multimedia / Imágenes -->
+  <div class="lg:col-span-5 flex flex-col gap-6">
+    <div
+      class="bg-base-100 p-6 rounded-box shadow-sm border border-base-200 flex flex-col gap-4 sticky top-6"
+    >
+      <h2 class="text-lg font-bold">Imágenes del Producto</h2>
+
+      <!-- Carrusel de imágenes actuales y vistas previas locales -->
+      <div class="w-full overflow-hidden rounded-box border border-base-200 bg-base-200">
+        <app-product-carousel [images]="carouselImages()" />
+      </div>
+
+      <!-- Subida de nuevas imágenes -->
+      <div class="form-control w-full gap-3">
+        <label class="label"
+          ><span class="label-text font-medium">Agregar nueva imagen</span></label
+        >
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          class="file-input file-input-bordered file-input-primary w-full"
+          (change)="onFilesChanged($event)"
+        />
+        <label class="label">
+          <span class="label-text-alt text-base-content/50">PNG, JPG o WEBP (Máx. 2MB)</span>
+        </label>
+
+        <!-- Vistas previas con botón de eliminar -->
+        @if (tempImages().length > 0) {
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-2">
+            @for (image of tempImages(); track image; let i = $index) {
+              <div
+                class="relative group aspect-square rounded-box overflow-hidden border border-base-300 bg-base-200"
+              >
+                <img
+                  [src]="image"
+                  [alt]="'Vista previa ' + (i + 1)"
+                  class="w-full h-full object-cover"
+                />
+                <button
+                  type="button"
+                  class="btn btn-circle btn-xs btn-error absolute top-2 right-2 opacity-80 group-hover:opacity-100 transition-opacity shadow"
+                  (click)="removeTempImage(i)"
+                  title="Eliminar imagen"
+                >
+                  ✕
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Alerta de éxito flotante -->
+@if (wasSaved()) {
+  <div
+    class="alert alert-success shadow-lg fixed bottom-6 right-6 z-50 w-80 animate-fade-in flex items-center gap-3"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="stroke-current shrink-0 h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <span>Datos actualizados correctamente</span>
+  </div>
+}

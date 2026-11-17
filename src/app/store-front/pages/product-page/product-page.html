@@ -1,0 +1,67 @@
+@if (productResource.isLoading()) {
+  <!-- Estado de carga con Skeleton de DaisyUI -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 animate-pulse">
+    <div class="skeleton h-120 w-full rounded-2xl"></div>
+    <div class="space-y-4 pt-4">
+      <div class="skeleton h-6 w-24 rounded-full"></div>
+      <div class="skeleton h-10 w-3/4"></div>
+      <div class="skeleton h-8 w-1/3"></div>
+      <div class="skeleton h-24 w-full"></div>
+      <div class="skeleton h-12 w-full sm:w-48"></div>
+    </div>
+  </div>
+} @else if (productResource.error()) {
+  <!-- Estado de error estructurado con Alert y opción de reintento -->
+  <div class="alert alert-error shadow-lg max-w-xl mx-auto my-12">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="stroke-current shrink-0 h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <div>
+      <h3 class="font-bold">Error al cargar el producto</h3>
+      <div class="text-xs">No fue posible consultar la información solicitada.</div>
+    </div>
+    <button class="btn btn-sm btn-ghost" (click)="productResource.reload()">Reintentar</button>
+  </div>
+} @else if (productResource.value(); as product) {
+  <!-- Vista principal del producto -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
+    <!-- Carrusel de imágenes -->
+    <app-product-carousel [images]="product.images" />
+
+    <!-- Información y detalle -->
+    <div class="space-y-6">
+      <div>
+        @if (product.gender) {
+          <span class="badge badge-secondary badge-outline mb-2 uppercase text-xs font-semibold">
+            {{ product.gender }}
+          </span>
+        }
+        <h1 class="text-3xl lg:text-4xl font-bold font-montserrat text-base-content">
+          {{ product.title }}
+        </h1>
+        <p class="text-3xl font-extrabold text-primary mt-3">
+          {{ product.price | currency: 'USD' }}
+        </p>
+      </div>
+
+      <div class="divider my-2"></div>
+
+      <div>
+        <h3 class="font-semibold text-sm text-base-content/70 mb-1">Descripción</h3>
+        <p class="text-base-content/80 leading-relaxed">
+          {{ product.description }}
+        </p>
+      </div>
+    </div>
+  </div>
+}

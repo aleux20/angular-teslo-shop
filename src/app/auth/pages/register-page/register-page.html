@@ -1,0 +1,69 @@
+<form class="flex flex-col gap-4" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Nombre completo</legend>
+    <input
+      type="text"
+      class="input input-bordered w-full"
+      [class.input-error]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched"
+      [attr.aria-invalid]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched"
+      placeholder="Tu nombre"
+      formControlName="fullName"
+    />
+    @if (registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched) {
+      <p class="text-error text-xs mt-1">El nombre es obligatorio.</p>
+    }
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Correo electrónico</legend>
+    <input
+      type="email"
+      class="input input-bordered w-full"
+      [class.input-error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+      [attr.aria-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+      placeholder="correo@ejemplo.com"
+      formControlName="email"
+    />
+    @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+      <p class="text-error text-xs mt-1">Ingresa un correo electrónico válido.</p>
+    }
+  </fieldset>
+
+  <fieldset class="fieldset">
+    <legend class="fieldset-legend">Contraseña</legend>
+    <input
+      type="password"
+      class="input input-bordered w-full"
+      [class.input-error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+      [attr.aria-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+      placeholder="••••••••"
+      formControlName="password"
+    />
+    @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+      <p class="text-error text-xs mt-1">
+        La contraseña debe tener al menos 6 caracteres.
+      </p>
+    }
+  </fieldset>
+
+  <button class="btn btn-secondary w-full mt-2" type="submit" [disabled]="isPosting()">
+    @if (isPosting()) {
+      <span class="loading loading-spinner"></span>
+    }
+    {{ isPosting() ? 'Creando cuenta...' : 'Crear cuenta' }}
+  </button>
+
+  <p class="text-sm text-center text-slate-600 mt-2">
+    ¿Ya tienes cuenta?
+    <a routerLink="/auth/login" class="text-secondary font-semibold">Inicia sesión</a>
+  </p>
+</form>
+
+@if (hasError()) {
+  <div
+    role="alert"
+    class="alert alert-error fixed bottom-5 right-5 w-auto shadow-lg z-50 animate-fade-in"
+  >
+    <span>No se pudo crear la cuenta. Revisa los datos e inténtalo de nuevo.</span>
+  </div>
+}

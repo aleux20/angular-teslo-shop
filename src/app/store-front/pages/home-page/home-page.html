@@ -1,0 +1,85 @@
+<!-- Encabezado de la página -->
+<div class="mb-8">
+  <h1 class="text-3xl sm:text-4xl font-extrabold font-montserrat tracking-tight text-base-content">
+    Todos los productos
+  </h1>
+  <p class="text-base-content/70 mt-1 text-lg">Explora nuestra colección para todos los gustos</p>
+</div>
+
+@if (productsResource.isLoading()) {
+  <!-- Estado de carga: 12 Skeletons coincidentes con la paginación -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    @for (item of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; track $index) {
+      <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
+        <div class="skeleton h-56 w-full rounded-none"></div>
+        <div class="card-body p-5 space-y-3">
+          <div class="skeleton h-6 w-3/4"></div>
+          <div class="skeleton h-4 w-full"></div>
+          <div class="skeleton h-4 w-2/3"></div>
+          <div class="flex justify-between items-center pt-3 mt-2 border-t border-base-200">
+            <div class="skeleton h-6 w-20"></div>
+            <div class="skeleton h-8 w-24 rounded-lg"></div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+} @else if (productsResource.error()) {
+  <!-- Estado de error -->
+  <div class="alert alert-error shadow-md max-w-xl mx-auto my-12">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="stroke-current shrink-0 h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    <div>
+      <h3 class="font-bold">Error al obtener productos</h3>
+      <div class="text-xs">No se pudo establecer conexión con el catálogo.</div>
+    </div>
+    <button class="btn btn-sm btn-ghost" (click)="productsResource.reload()">Reintentar</button>
+  </div>
+} @else {
+  <!-- Cuadrícula principal -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    @for (product of productsResource.value()?.products ?? []; track product.id) {
+      <app-product-card [product]="product" />
+    } @empty {
+      <!-- Estado vacío -->
+      <div class="col-span-full text-center py-16 bg-base-200/50 rounded-2xl my-4">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="mx-auto h-16 w-16 text-base-content/30 mb-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+        <h3 class="text-lg font-bold text-base-content/80">No hay productos disponibles</h3>
+        <p class="text-sm text-base-content/60 mt-1">No se encontraron ítems en esta página.</p>
+        <button class="btn btn-outline btn-sm mt-4" (click)="productsResource.reload()">
+          Refrescar catálogo
+        </button>
+      </div>
+    }
+  </div>
+
+  <!-- Paginación -->
+  <app-pagination
+    [pages]="productsResource.value()?.pages ?? 0"
+    [currentPage]="paginationService.currentPage()"
+  />
+}

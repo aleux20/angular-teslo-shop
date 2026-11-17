@@ -1,0 +1,28 @@
+<div class="swiper rounded-2xl bg-base-200 overflow-hidden shadow-sm" #swiperDiv>
+  <div class="swiper-wrapper">
+    @for (image of images(); track $index) {
+      <div class="swiper-slide">
+        <img
+          [src]="image | productImage"
+          [alt]="'Imagen ' + ($index + 1) + ' del producto'"
+          class="w-full h-full object-contain p-2 animate-fade-in"
+        />
+      </div>
+    } @empty {
+          <div class="swiper-slide">
+        <img
+          [src]="null | productImage"
+          alt="Producto sin imagen"
+          class="w-full h-full object-contain p-2 animate-fade-in"
+        />
+      </div>
+    }
+  </div>
+
+  <!-- Paginación por puntos -->
+  <div class="swiper-pagination"></div>
+
+  <!-- Botones de navegación -->
+  <div class="swiper-button-prev"></div>
+  <div class="swiper-button-next"></div>
+</div>
